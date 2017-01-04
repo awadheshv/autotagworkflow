@@ -75,8 +75,7 @@ public class AutoLabelWorkflowStep extends AbstractAWSWorkflowStep {
 	                .withMaxLabels(MAX_LABELS)
 	                .withMinConfidence(77F);
 
-	        AmazonRekognitionClient rekognitionClient = new AmazonRekognitionClient(getCredentials())
-	                .withEndpoint("service endpoint");
+	        AmazonRekognitionClient rekognitionClient = new AmazonRekognitionClient(getCredentials());
 	        rekognitionClient.setSignerRegionOverride("us-east-1");
 	
 	        DetectLabelsResult result = rekognitionClient.detectLabels(request);

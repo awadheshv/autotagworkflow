@@ -35,7 +35,7 @@ public abstract class AbstractAWSWorkflowStep extends AbstractAssetWorkflowProce
 	public static AWSCredentials getCredentials() throws AmazonClientException {
 		AWSCredentials credentials;
         try {
-            credentials = new ProfileCredentialsProvider("adminuser").getCredentials();
+            credentials = new ProfileCredentialsProvider().getCredentials();
             return credentials;
         } catch (Exception e) {
             throw new AmazonClientException("Cannot load the credentials from the credential profiles file. "
