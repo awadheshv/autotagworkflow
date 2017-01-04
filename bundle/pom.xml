@@ -136,8 +136,21 @@
     <artifactId>javax.jms</artifactId>
     <version>3.2-b06</version>
 </dependency>
- 
- 
+ <dependency>
+        <groupId>com.amazonaws</groupId>
+        <artifactId>aws-java-sdk</artifactId>
+        <version>1.11.69</version>
+     </dependency>
+ <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.joda</groupId>
+            <artifactId>joda-convert</artifactId>
+            <version>1.6</version>
+        </dependency>
  
  
      </dependencies>
@@ -158,12 +171,34 @@
                 <configuration>
                     <instructions>
                         <Embed-Dependency>                             
-                  *;scope=compile|runtime,
-              </Embed-Dependency>
+                 		 *;scope=compile|runtime,joda-time,joda-convert
+              			</Embed-Dependency>
                 <Embed-Transitive>true</Embed-Transitive> 
                 <Import-Package>
+                	org.osgi*,
+                            org.aspectj.lang; resolution:=optional,
+                            org.aspectj.lang.annotation; resolution:=optional,
+                            org.aspectj.lang.reflect; resolution:=optional,
+                            org.joda.time.format; resolution:=optional,
+                            org.junit; resolution:=optional,
+                            org.junit.rules; resolution:=optional,
+                            org.junit.runner.notification; resolution:=optional,
+                            org.junit.runners; resolution:=optional,
+                            org.junit.runners.model; resolution:=optional,
+                            org.springframework.beans; resolution:=optional,
+                            org.springframework.beans.factory; resolution:=optional,
+                            org.springframework.beans.factory.config; resolution:=optional,
+                            org.springframework.beans.factory.support; resolution:=optional,
+                            org.springframework.context; resolution:=optional,
+                            org.springframework.scheduling.support; resolution:=optional,
+                            org.springframework.test.context.junit4; resolution:=optional,
+                
                   sun.misc;resolution:=optional,
-                  com.sun.jdmk.comm;resolution:=optional,*
+                  com.sun.jdmk.comm;resolution:=optional,
+                  com.day.cq.workflow;resolution:=optional,
+                  com.day.cq.workflow.exec;resolution:=optional,
+                  com.day.cq.workflow.metadata;resolution:=optional,
+                  com.fasterxml.jackson.core.filter;resolution:=optional,*
                 </Import-Package>                       
 
                     </instructions>
