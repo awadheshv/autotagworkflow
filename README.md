@@ -72,7 +72,7 @@ Credentials in this example are loaded as follows:
 
     new ProfileCredentialsProvider().getCredentials();
     
-This creates a new profile credentials provider that returns the AWS security credentials configured for the default profile. It will look at /Users/<userid>/.aws/credentials for the credentials file
+This creates a new profile credentials provider that returns the AWS security credentials configured for the default profile. It will look at /Users/\<username\>/.aws/credentials for the credentials file
     
 * Start your AEM instance in this environment.
 * Modify the AutoTag workflow to use the Microsoft process steps and select an asset.
