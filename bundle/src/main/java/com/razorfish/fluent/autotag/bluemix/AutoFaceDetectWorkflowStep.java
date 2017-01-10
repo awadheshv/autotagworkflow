@@ -37,7 +37,6 @@ public class AutoFaceDetectWorkflowStep extends AbstractBlueMixWorkflowStep {
 
 	private static final String NAMESPACE = "/etc/tags/bluemix";
 	private static final String CONTAINER = "/face";
-	private static final int MAX_FACES = 10;
 	@Reference
 	JcrTagManagerFactory tmf;
 
@@ -48,7 +47,7 @@ public class AutoFaceDetectWorkflowStep extends AbstractBlueMixWorkflowStep {
 			final Asset asset = getAssetFromPayload(workItem, wfSession.getSession());
 
 			// create tag manager
-			TagManager tagManager = tmf.getTagManager(wfSession.getSession());
+			TagManager tagManager = getResourceResolver(wfSession.getSession()).adaptTo(TagManager.class);
 			Tag superTag = tagManager.resolve(NAMESPACE + CONTAINER);
 			Tag tag = null;
 

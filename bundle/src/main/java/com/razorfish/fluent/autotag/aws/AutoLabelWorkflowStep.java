@@ -55,7 +55,7 @@ public class AutoLabelWorkflowStep extends AbstractAWSWorkflowStep {
 			final Asset asset = getAssetFromPayload(workItem, wfSession.getSession());
 
 			// create tag manager
-			TagManager tagManager = tmf.getTagManager(wfSession.getSession());
+			TagManager tagManager = getResourceResolver(wfSession.getSession()).adaptTo(TagManager.class);
 			Tag superTag = tagManager.resolve(NAMESPACE + CONTAINER);
 			Tag tag = null;
 

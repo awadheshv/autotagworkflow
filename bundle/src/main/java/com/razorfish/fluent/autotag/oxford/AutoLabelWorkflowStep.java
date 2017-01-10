@@ -37,7 +37,6 @@ public class AutoLabelWorkflowStep extends AbstractOxfordWorkflowStep {
 
 	private static final String NAMESPACE = "/etc/tags/msft";
 	private static final String CONTAINER = "/label";
-	private static final int MAX_LABELS = 10;
 	@Reference
 	JcrTagManagerFactory tmf;
 
@@ -48,7 +47,7 @@ public class AutoLabelWorkflowStep extends AbstractOxfordWorkflowStep {
 			final Asset asset = getAssetFromPayload(workItem, wfSession.getSession());
 
 			// create tag manager
-			TagManager tagManager = tmf.getTagManager(wfSession.getSession());
+			TagManager tagManager = getResourceResolver(wfSession.getSession()).adaptTo(TagManager.class);
 			Tag superTag = tagManager.resolve(NAMESPACE + CONTAINER);
 			Tag tag = null;
 

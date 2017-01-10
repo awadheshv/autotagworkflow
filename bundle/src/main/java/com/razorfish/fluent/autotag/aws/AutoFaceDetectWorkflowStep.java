@@ -30,15 +30,14 @@ import com.amazonaws.services.rekognition.model.DetectFacesResult;
 import com.amazonaws.services.rekognition.model.Attribute;
 import com.amazonaws.services.rekognition.model.FaceDetail;
 
-
 @Component
 
 @Service
 
 @Properties({
-		@Property(name = Constants.SERVICE_DESCRIPTION, value = "aws face - Automatic face detection and tagging using aws."),
+		@Property(name = Constants.SERVICE_DESCRIPTION, value = "AWS face - Automatic face detection and tagging using aws."),
 		@Property(name = Constants.SERVICE_VENDOR, value = "Razorfish"),
-		@Property(name = "process.face", value = "aws face - Automatic face detection and tagging using aws") })
+		@Property(name = "process.face", value = "AWS face - Automatic face detection and tagging using aws") })
 public class AutoFaceDetectWorkflowStep extends AbstractAWSWorkflowStep {
 
 	/** Default log. */
@@ -46,7 +45,6 @@ public class AutoFaceDetectWorkflowStep extends AbstractAWSWorkflowStep {
 
 	private static final String NAMESPACE = "/etc/tags/aws";
 	private static final String CONTAINER = "/face";
-	private static final int MAX_FACES = 10;
 	@Reference
 	JcrTagManagerFactory tmf;
 
@@ -57,7 +55,7 @@ public class AutoFaceDetectWorkflowStep extends AbstractAWSWorkflowStep {
 			final Asset asset = getAssetFromPayload(workItem, wfSession.getSession());
 
 			// create tag manager
-			TagManager tagManager = tmf.getTagManager(wfSession.getSession());
+			TagManager tagManager = getResourceResolver(wfSession.getSession()).adaptTo(TagManager.class);
 			Tag superTag = tagManager.resolve(NAMESPACE + CONTAINER);
 			Tag tag = null;
 
@@ -71,21 +69,18 @@ public class AutoFaceDetectWorkflowStep extends AbstractAWSWorkflowStep {
 			byte[] data = new byte[(int) asset.getOriginal().getSize()];
 			int numbytesread = asset.getOriginal().getStream().read(data);
 			log.debug("Read :  {} of {}", numbytesread, asset.getOriginal().getSize());
-			
-			 DetectFacesRequest request = new DetectFacesRequest()
-					 .withImage(new Image().withBytes(ByteBuffer.wrap(data)))
-		                .withAttributes(Attribute.ALL);
 
-		        AmazonRekognitionClient rekognitionClient = new AmazonRekognitionClient(getCredentials())
-		                .withEndpoint("service endpoint");
-		        rekognitionClient.setSignerRegionOverride("us-east-1");
-		        
-		        
-		        DetectFacesResult result = rekognitionClient.detectFaces(request);
-		        
-		        List<FaceDetail> faceDetails = result.getFaceDetails();
+			DetectFacesRequest request = new DetectFacesRequest()
+					.withImage(new Image().withBytes(ByteBuffer.wrap(data))).withAttributes(Attribute.ALL);
 
-	        String[] tagArray = createFaceTags(tagManager, faceDetails, NAMESPACE, CONTAINER);
+			AmazonRekognitionClient rekognitionClient = new AmazonRekognitionClient(getCredentials());
+			rekognitionClient.setSignerRegionOverride("us-east-1");
+
+			DetectFacesResult result = rekognitionClient.detectFaces(request);
+
+			List<FaceDetail> faceDetails = result.getFaceDetails();
+
+			String[] tagArray = createFaceTags(tagManager, faceDetails, NAMESPACE, CONTAINER);
 
 			addMetaData(workItem, wfSession, asset, tagManager, tagArray);
 

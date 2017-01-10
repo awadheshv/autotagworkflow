@@ -63,7 +63,7 @@ public class AutoTextWorkflowStep extends AbstractCloudVisionWorkflowStep {
 			final Asset asset = getAssetFromPayload(workItem, wfSession.getSession());
 
 			// create tag manager
-			TagManager tagManager = tmf.getTagManager(wfSession.getSession());
+			TagManager tagManager = getResourceResolver(wfSession.getSession()).adaptTo(TagManager.class);
 			Tag superTag = tagManager.resolve(NAMESPACE);
 			Tag tag = null;
 

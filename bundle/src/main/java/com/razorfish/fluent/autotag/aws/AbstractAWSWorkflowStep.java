@@ -23,6 +23,7 @@ import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.rekognition.model.Label;
+import com.amazonaws.services.rekognition.model.Emotion;
 import com.amazonaws.services.rekognition.model.FaceDetail;
 
 
@@ -98,22 +99,12 @@ public abstract class AbstractAWSWorkflowStep extends AbstractAssetWorkflowProce
 	 */
 	protected String[] createTags(TagManager tagManager, List<Label> entities, String namespace,
 			String container) throws InvalidTagFormatException {
-		Tag tag;
+
 		String tagArray[] = new String[entities.size()];
 		int index = 0;
 
 		for (Label label : entities) {
-			log.info("found label " + label.getName() + " with score : " + label.getConfidence());
-
-			tag = tagManager.createTag(
-					namespace + container + "/" + label.getName().replaceAll(" ", "_").toLowerCase(),
-					label.getName(), "Auto detected : " + label.getName(), true);
-			tagArray[index] = tag.getNamespace().getName() + ":"
-					+ tag.getPath().substring(tag.getPath().indexOf(namespace) + namespace.length() + 1);
-
-			log.info(tag.getNamespace().getName() + ":"
-					+ tag.getPath().substring(tag.getPath().indexOf(namespace) + namespace.length() + 1));
-
+			generateTag(tagManager, namespace, container, tagArray, index, label.getName());
 			index++;
 
 		}
@@ -122,28 +113,63 @@ public abstract class AbstractAWSWorkflowStep extends AbstractAssetWorkflowProce
 	
 	protected String[] createFaceTags(TagManager tagManager, List<FaceDetail> entities, String namespace,
 			String container) throws InvalidTagFormatException {
-		Tag tag;
-		String tagArray[] = new String[entities.size()];
+
+		String tagArray[] = new String[entities.size()+4];
 		int index = 0;
 
 		for (FaceDetail faceDetail : entities ) {
-			if (faceDetail.getGender()!=null) {
-				log.info("found face " + faceDetail.getGender() + " with score : " + faceDetail.getConfidence());
-	
-				tag = tagManager.createTag(
-						namespace + container + "/" + faceDetail.getGender().getValue().replaceAll(" ", "_").toLowerCase(),
-						faceDetail.getGender().getValue(), "Auto detected : " + faceDetail.getGender().getValue(), true);
-				tagArray[index] = tag.getNamespace().getName() + ":"
-						+ tag.getPath().substring(tag.getPath().indexOf(namespace) + namespace.length() + 1);
-	
-				log.info(tag.getNamespace().getName() + ":"
-						+ tag.getPath().substring(tag.getPath().indexOf(namespace) + namespace.length() + 1));
-	
+			
+			for (Emotion emotion : faceDetail.getEmotions() ) {
+				if (emotion.getConfidence()>75.0) {
+					generateTag(tagManager, namespace, container+ "/emotion", tagArray, index, emotion.getType().toString());
+					index++;
+				}
+			}
+			
+			if (faceDetail.getGender()!=null && faceDetail.getGender().getConfidence()>75.0) {
+				generateTag(tagManager, namespace, container , tagArray, index, faceDetail.getGender().getValue());
+				index++;
+			}
+			if (faceDetail.getBeard()!=null && faceDetail.getBeard().getValue() && faceDetail.getBeard().getConfidence()>75.0) {
+				generateTag(tagManager, namespace, container, tagArray, index, "Beard");
+				index++;
+			}
+			if (faceDetail.getEyeglasses()!=null && faceDetail.getEyeglasses().getValue() && faceDetail.getEyeglasses().getConfidence()>75.0) {
+				generateTag(tagManager, namespace, container, tagArray, index, "Eyeglasses");
+				index++;
+			}
+			if (faceDetail.getMustache()!=null && faceDetail.getMustache().getValue() && faceDetail.getMustache().getConfidence()>75.0) {
+				generateTag(tagManager, namespace, container, tagArray, index, "Mustache");
+				index++;
+			}
+			if (faceDetail.getSmile()!=null && faceDetail.getSmile().getValue() && faceDetail.getSmile().getConfidence()>75.0) {
+				generateTag(tagManager, namespace, container, tagArray, index, "Smile");
+				index++;
+			}
+			if (faceDetail.getSunglasses()!=null && faceDetail.getSunglasses().getValue() && faceDetail.getSunglasses().getConfidence()>75.0) {
+				generateTag(tagManager, namespace, container, tagArray, index, "Sunglasses");
 				index++;
 			}
 
 		}
 		return tagArray;
+	}
+
+
+
+	private void generateTag(TagManager tagManager, String namespace, String container, String[] tagArray, int index,
+			String element) throws InvalidTagFormatException {
+		Tag tag;
+		log.info("found face " + element );
+
+		tag = tagManager.createTag(
+				namespace + container + "/" + element.replaceAll(" ", "_").toLowerCase(),
+				element, "Auto detected : " + element, true);
+		tagArray[index] = tag.getNamespace().getName() + ":"
+				+ tag.getPath().substring(tag.getPath().indexOf(namespace) + namespace.length() + 1);
+
+		log.info(tag.getNamespace().getName() + ":"
+				+ tag.getPath().substring(tag.getPath().indexOf(namespace) + namespace.length() + 1));
 	}
 
 	public AbstractAWSWorkflowStep() {
