@@ -48,7 +48,8 @@ Once you retrieve your credentials, set the following environment variable.
     export IBM_API_KEY=<api_key>
     
 * Start your AEM instance in this environment.
-* Modify the AutoTag workflow to use the Bluemix process steps and select an asset.
+* Modify the AutoTag workflow to use the Bluemix process steps.
+* Kick off the workflow and select an asset.
 
 Microsoft Cognitive Services
 ----------
@@ -61,7 +62,8 @@ Once you retrieve your credentials, set the following environment variable.
     
     
 * Start your AEM instance in this environment.
-* Modify the AutoTag workflow to use the Microsoft process steps and select an asset.
+* Modify the AutoTag workflow to use the Microsoft process steps.
+* Kick off the workflow and select an asset.
 
 Amazon AI
 ----------
@@ -75,7 +77,8 @@ Credentials in this example are loaded as follows:
 This creates a new profile credentials provider that returns the AWS security credentials configured for the default profile. It will look at /Users/\<username\>/.aws/credentials for the credentials file
     
 * Start your AEM instance in this environment.
-* Modify the AutoTag workflow to use the Microsoft process steps and select an asset.
+* Modify the AutoTag workflow to use the Amazon process steps.
+* Kick off the workflow and select an asset.
 
 
 Building
